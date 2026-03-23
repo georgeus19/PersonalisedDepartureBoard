@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">PersonalisedDepartureBoard</string>
+    <string name="search_departures">Search Departures</string>
+    <string name="departure_board">Departure Board</string>
+    <string name="create_profile">Create Profile</string>
+    <string name="back_button">Back</string>
 </resources>
