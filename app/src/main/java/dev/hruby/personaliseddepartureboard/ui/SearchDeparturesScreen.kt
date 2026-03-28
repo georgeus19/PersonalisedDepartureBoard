@@ -46,14 +46,6 @@ fun SearchDeparturesScreen(
     val apiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NDg1NCwiaWF0IjoxNzczNjAxNTI3LCJleHAiOjExNzczNjAxNTI3LCJpc3MiOiJnb2xlbWlvIiwianRpIjoiZjUxNTM2NjctMDU1Yy00NWQxLWE1YjctOTc5ZTBhNjg0YTk2In0.S2Csa_AZJe3qUCh_V_5nkZLTSScOM7yJEFMus3MinrY"
 
     Column(modifier = modifier.fillMaxSize().padding(16.dp)) {
-        Button(
-            onClick={ onCancelButtonClicked() },
-        ) {
-            Text(
-                text = "BACK"
-            )
-        }
-
         TextField(
             value = stopNameInput,
             onValueChange = { stopNameInput = it },
