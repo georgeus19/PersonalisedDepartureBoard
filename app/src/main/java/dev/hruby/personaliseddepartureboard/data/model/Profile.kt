@@ -18,7 +18,7 @@ data class ProfileStop(
 
 data class ProfileStopDraft(
     val id: String? = null,
-    val name: String = "",
+    val name: String = "Malostranské náměstí",
     val platforms: List<String> = emptyList(),
     val lines: List<String> = emptyList()
 )

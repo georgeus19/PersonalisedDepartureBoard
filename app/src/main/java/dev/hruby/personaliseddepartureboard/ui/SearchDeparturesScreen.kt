@@ -29,21 +29,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.hruby.personaliseddepartureboard.data.model.DepartureFeature
-import dev.hruby.personaliseddepartureboard.ui.viewmodel.DepartureViewModel
 
 
 @Composable
 fun SearchDeparturesScreen(
+    viewModel: DepartureBoardViewModel,
     onCancelButtonClicked: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: DepartureViewModel = viewModel()
 ) {
     val departures by viewModel.departures.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
 
     var stopNameInput by remember { mutableStateOf("Malostranské náměstí") }
-    val apiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NDg1NCwiaWF0IjoxNzczNjAxNTI3LCJleHAiOjExNzczNjAxNTI3LCJpc3MiOiJnb2xlbWlvIiwianRpIjoiZjUxNTM2NjctMDU1Yy00NWQxLWE1YjctOTc5ZTBhNjg0YTk2In0.S2Csa_AZJe3qUCh_V_5nkZLTSScOM7yJEFMus3MinrY"
 
     Column(modifier = modifier.fillMaxSize().padding(16.dp)) {
         TextField(
@@ -57,7 +55,7 @@ fun SearchDeparturesScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         Button(
-            onClick = { viewModel.fetchDeparturesByName(stopNameInput, apiKey) },
+            onClick = { viewModel.fetchDeparturesByName(stopNameInput) },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Search Departures")

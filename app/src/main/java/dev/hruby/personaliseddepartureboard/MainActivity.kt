@@ -5,10 +5,19 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -24,15 +33,19 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import dev.hruby.personaliseddepartureboard.data.model.LastStop
 import dev.hruby.personaliseddepartureboard.ui.AppBar
 import dev.hruby.personaliseddepartureboard.ui.CreateProfileScreen
 import dev.hruby.personaliseddepartureboard.ui.DepartureBoardScreen
 import dev.hruby.personaliseddepartureboard.ui.DepartureBoardViewModel
+import dev.hruby.personaliseddepartureboard.ui.Line
 import dev.hruby.personaliseddepartureboard.ui.MultiSelectScreen
+import dev.hruby.personaliseddepartureboard.ui.Platform
 import dev.hruby.personaliseddepartureboard.ui.SearchDeparturesScreen
 import dev.hruby.personaliseddepartureboard.ui.SelectStopScreen
 import dev.hruby.personaliseddepartureboard.ui.SelectableItem
 import dev.hruby.personaliseddepartureboard.ui.theme.PersonalisedDepartureBoardTheme
+import kotlin.collections.forEach
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -118,6 +131,7 @@ fun DepartureBoardApp(
             }
             composable(route = Screen.SearchDepartures.name) {
                 SearchDeparturesScreen(
+                    viewModel = departureBoardViewModel,
                     onCancelButtonClicked = { navController.navigate(Screen.DepartureBoard.name) },
                     modifier = Modifier.padding(8.dp)
                 )
@@ -155,11 +169,15 @@ fun DepartureBoardApp(
             }
             composable(route = Screen.SelectLines.name) {
                 val state by departureBoardViewModel.state.collectAsState()
+                val lines by departureBoardViewModel.lines.collectAsState()
+                departureBoardViewModel.fetchLines(state.editedProfile!!.stopDraft!!.name)
                 MultiSelectScreen(
-                    items = listOf(
-                        SelectableItem(id = "1", cardContent = { LineOption("1") }),
-                        SelectableItem(id = "2", cardContent = { LineOption("2") })
-                    ),
+                    items = lines.map { line ->
+                        SelectableItem(
+                            id = line.id,
+                            cardContent = { LineOption(lineId = line.id) }
+                        )
+                    },
                     onNext = { lines ->
                         departureBoardViewModel.updateDraftStopLine(lines)
                         navController.navigate(Screen.SelectPlatforms.name)
@@ -173,11 +191,13 @@ fun DepartureBoardApp(
                 )
             }
             composable(route = Screen.SelectPlatforms.name) {
+                val state by departureBoardViewModel.state.collectAsState()
+                val platforms by departureBoardViewModel.platforms.collectAsState()
+                departureBoardViewModel.fetchPlatforms(state.editedProfile!!.stopDraft!!.name)
                 MultiSelectScreen(
-                    items = listOf(
-                        SelectableItem(id = "A", cardContent = { PlatformOption("A") }),
-                        SelectableItem(id = "B", cardContent = { PlatformOption("B") }),
-                    ),
+                    items = platforms.map {
+                        SelectableItem(id = it.code, cardContent = { PlatformOption(it) })
+                    },
                     onNext = { platforms: List<String> ->
                         departureBoardViewModel.updateDraftStopPlatform(platforms)
                         departureBoardViewModel.createProfileStop()
@@ -200,14 +220,46 @@ fun DepartureBoardApp(
 
 @Composable
 fun LineOption(
-    text: String
+    lineId: String,
 ) {
-    Text(text = text)
+    Row() {
+        Text(text = lineId)
+    }
 }
 
 @Composable
 fun PlatformOption(
-    text: String
+    platform: Platform
 ) {
-    Text(text = text)
+    Card() {
+
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                text = platform.code,
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                platform.lines.forEach { line ->
+                    AssistChip(
+                        onClick = {},
+                        enabled = false,
+                        label = {
+                            Row() {
+                                Text(line.id)
+                                Text(" -> ")
+                                Text(line.lastStop ?: "")
+                            }
+                        }
+                    )
+                }
+            }
+        }
+    }
 }

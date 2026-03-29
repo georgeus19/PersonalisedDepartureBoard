@@ -127,16 +127,16 @@ private fun <T> Set<T>.toggle(value: T): Set<T> {
 }
 
 
-@Preview
-@Composable
-fun MultiSelectLinesPreview() {
-    MultiSelectScreen(
-        items = listOf(
-            SelectableItem(id = "1", cardContent = { LineOption("1") }),
-            SelectableItem(id = "2", cardContent = { LineOption("2") })
-        ),
-        onNext = {},
-        onCancel = {},
-        initiallySelectedIds = emptySet()
-    )
-}
+//@Preview
+//@Composable
+//fun MultiSelectLinesPreview() {
+//    MultiSelectScreen(
+//        items = listOf(
+//            SelectableItem(id = "1", cardContent = { LineOption("1") }),
+//            SelectableItem(id = "2", cardContent = { LineOption("2") })
+//        ),
+//        onNext = {},
+//        onCancel = {},
+//        initiallySelectedIds = emptySet()
+//    )
+//}

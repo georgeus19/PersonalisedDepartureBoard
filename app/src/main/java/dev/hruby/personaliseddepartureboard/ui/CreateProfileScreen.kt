@@ -229,14 +229,14 @@ private fun minutesToLocalTime(totalMinutes: Int): LocalTime =
 private fun LocalTime.toMinutes(): Int =
     hour * 60 + minute
 
-@SuppressLint("ViewModelConstructorInComposable")
-@Preview
-@Composable
-fun CreateProfileScreenPreview() {
-    CreateProfileScreen(
-        DepartureBoardViewModel(),
-        onNext = {},
-        onCancel = {},
-        onAddStop = {}
-    )
-}
+//@SuppressLint("ViewModelConstructorInComposable")
+//@Preview
+//@Composable
+//fun CreateProfileScreenPreview() {
+//    CreateProfileScreen(
+//        DepartureBoardViewModel(AD),
+//        onNext = {},
+//        onCancel = {},
+//        onAddStop = {}
+//    )
+//}
