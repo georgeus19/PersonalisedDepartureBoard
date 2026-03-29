@@ -3,14 +3,17 @@ package dev.hruby.personaliseddepartureboard.ui
 import androidx.lifecycle.ViewModel
 import dev.hruby.personaliseddepartureboard.data.model.Profile
 import dev.hruby.personaliseddepartureboard.data.model.ProfileDraft
+import dev.hruby.personaliseddepartureboard.data.model.ProfileStop
 import dev.hruby.personaliseddepartureboard.data.model.ProfileStopDraft
 import dev.hruby.personaliseddepartureboard.data.model.Stop
 import dev.hruby.personaliseddepartureboard.data.model.Validity
 import dev.hruby.personaliseddepartureboard.data.model.toDraft
 import dev.hruby.personaliseddepartureboard.data.model.toProfile
+import dev.hruby.personaliseddepartureboard.data.model.toProfileStop
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalTime
+import java.util.UUID
 
 data class DepartureBoardState(
     val profiles: List<Profile> = emptyList(),
@@ -24,7 +27,9 @@ class DepartureBoardViewModel : ViewModel() {
 
     fun startProfileCreate() {
         _state.value = _state.value.copy(
-            editedProfile = ProfileDraft()
+            editedProfile = ProfileDraft(
+                stops = emptyList()
+            )
         )
     }
 
@@ -38,8 +43,20 @@ class DepartureBoardViewModel : ViewModel() {
 
     fun startProfileStopEdit() {
         updateDraft {
-            it.copy(stopDraft = ProfileStopDraft())
+            it.copy(stopDraft = ProfileStopDraft(id = UUID.randomUUID().toString()))
         }
+    }
+
+    fun createProfileStop() {
+        val currentDraft = _state.value.editedProfile ?: return
+        val stopDraft = currentDraft.stopDraft ?: return
+        
+        _state.value = _state.value.copy(
+            editedProfile = currentDraft.copy(
+                stops = currentDraft.stops + stopDraft.toProfileStop(),
+                stopDraft = null
+            )
+        )
     }
 
     private fun updateDraft(transform: (ProfileDraft) -> ProfileDraft) {
@@ -97,7 +114,7 @@ class DepartureBoardViewModel : ViewModel() {
         val draft = _state.value.editedProfile ?: return
 
         val profile = draft.toProfile(
-            generateId = { java.util.UUID.randomUUID().toString() }
+            generateId = { UUID.randomUUID().toString() }
         )
 
         val updatedProfiles = if (draft.id == null) {
@@ -120,4 +137,3 @@ class DepartureBoardViewModel : ViewModel() {
         )
     }
 }
-

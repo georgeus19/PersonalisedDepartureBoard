@@ -3,23 +3,31 @@ package dev.hruby.personaliseddepartureboard.ui
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.hruby.personaliseddepartureboard.R
+import dev.hruby.personaliseddepartureboard.data.model.ProfileStop
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
@@ -27,14 +35,11 @@ import kotlin.math.roundToInt
 @Composable
 fun CreateProfileScreen(
     viewModel: DepartureBoardViewModel,
+    onAddStop: () -> Unit,
     onNext: () -> Unit,
     onCancel: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-
-    LaunchedEffect(Unit) {
-        viewModel.startProfileCreate()
-    }
 
     val state by viewModel.state.collectAsState()
 
@@ -62,9 +67,27 @@ fun CreateProfileScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Column() {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Stops",
+                style = MaterialTheme.typography.labelLarge
+            )
+            Button(
+                onClick = onAddStop
+            ) {
+                Text(text = "Add stop")
+            }
+        }
+
+        Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
             for (stop in state.editedProfile!!.stops) {
-                Text(text = stop.name)
+                ProfileStopCard(stop)
             }
         }
 
@@ -76,6 +99,78 @@ fun CreateProfileScreen(
 
 }
 
+@Composable
+fun ProfileStopCard(
+    stop: ProfileStop,
+    modifier: Modifier = Modifier,
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text(
+                text = stop.name,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+
+            if (stop.platforms.isNotEmpty()) {
+                StopChipSection(
+                    title = "Platforms",
+                    values = stop.platforms
+                )
+            }
+
+            if (stop.lines.isNotEmpty()) {
+                HorizontalDivider()
+                StopChipSection(
+                    title = "Lines",
+                    values = stop.lines
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun StopChipSection(
+    title: String,
+    values: List<String>,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            values.forEach { value ->
+                AssistChip(
+                    onClick = {},
+                    enabled = false,
+                    label = {
+                        Text(value)
+                    }
+                )
+            }
+        }
+    }
+}
 
 @Composable
 fun ValidityRangeSlider(
@@ -142,5 +237,6 @@ fun CreateProfileScreenPreview() {
         DepartureBoardViewModel(),
         onNext = {},
         onCancel = {},
+        onAddStop = {}
     )
 }

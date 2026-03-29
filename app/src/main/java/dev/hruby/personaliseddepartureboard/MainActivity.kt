@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -111,17 +112,23 @@ fun DepartureBoardApp(
             composable(route = Screen.DepartureBoard.name) {
                 DepartureBoardScreen(
                     onSearchDeparturesClick = { navController.navigate(Screen.SearchDepartures.name) },
-                    departureBoardViewModel = departureBoardViewModel
+                    departureBoardViewModel = departureBoardViewModel,
+                    modifier = Modifier.padding(8.dp)
                 )
             }
             composable(route = Screen.SearchDepartures.name) {
                 SearchDeparturesScreen(
-                    onCancelButtonClicked = { navController.navigate(Screen.DepartureBoard.name) }
+                    onCancelButtonClicked = { navController.navigate(Screen.DepartureBoard.name) },
+                    modifier = Modifier.padding(8.dp)
                 )
             }
             composable(route = Screen.CreateProfile.name) {
                 CreateProfileScreen(
                     viewModel = departureBoardViewModel,
+                    onAddStop = {
+                        departureBoardViewModel.startProfileStopEdit()
+                        navController.navigate(Screen.SelectStop.name)
+                    },
                     onNext = {
                         departureBoardViewModel.startProfileStopEdit()
                         navController.navigate(Screen.SelectStop.name)
@@ -129,7 +136,8 @@ fun DepartureBoardApp(
                     onCancel = {
                         departureBoardViewModel.cancelProfileEdit()
                         navController.navigate(Screen.DepartureBoard.name)
-                    }
+                    },
+                    modifier = Modifier.padding(8.dp)
                 )
             }
             composable(route = Screen.SelectStop.name) {
@@ -142,6 +150,7 @@ fun DepartureBoardApp(
                         departureBoardViewModel.cancelProfileEdit()
                         navController.navigate(Screen.DepartureBoard.name)
                     },
+                    modifier = Modifier.padding(8.dp)
                 )
             }
             composable(route = Screen.SelectLines.name) {
@@ -159,7 +168,8 @@ fun DepartureBoardApp(
                         departureBoardViewModel.cancelProfileEdit()
                         navController.navigate(Screen.DepartureBoard.name)
                     },
-                    initiallySelectedIds = state.editedProfile?.stopDraft?.lines?.toSet() ?: emptySet()
+                    initiallySelectedIds = state.editedProfile?.stopDraft?.lines?.toSet() ?: emptySet(),
+                    modifier = Modifier.padding(8.dp)
                 )
             }
             composable(route = Screen.SelectPlatforms.name) {
@@ -170,13 +180,16 @@ fun DepartureBoardApp(
                     ),
                     onNext = { platforms: List<String> ->
                         departureBoardViewModel.updateDraftStopPlatform(platforms)
+                        departureBoardViewModel.createProfileStop()
                         navController.navigate(Screen.CreateProfile.name)
                     },
                     onCancel = {
                         departureBoardViewModel.cancelProfileEdit()
+
                         navController.navigate(Screen.DepartureBoard.name)
                     },
-                    initiallySelectedIds = emptySet()
+                    initiallySelectedIds = emptySet(),
+                    modifier = Modifier.padding(8.dp)
                 )
             }
 

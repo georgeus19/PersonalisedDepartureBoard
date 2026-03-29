@@ -7,9 +7,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import dev.hruby.personaliseddepartureboard.R
-import dev.hruby.personaliseddepartureboard.data.model.ProfileStopDraft
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 
 @Composable
 fun SelectStopScreen(
@@ -19,23 +21,26 @@ fun SelectStopScreen(
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.state.collectAsState()
-    val stopText = state.editedProfile!!.stopDraft!!.name ?: ""
+    val initialName = state.editedProfile?.stopDraft?.name ?: ""
+    
+    var stopText by remember(initialName) {
+        mutableStateOf(initialName)
+    }
+    
     Column(
         modifier = modifier
     ) {
         OutlinedTextField(
             value = stopText,
             label = { Text(text = stringResource(R.string.stop_name)) },
-            onValueChange = { },
+            onValueChange = { stopText = it },
         )
         CancelNextButtons(
             onCancel = onCancel,
             onNext = {
-                viewModel.updateDraftStopName(stopText);
+                viewModel.updateDraftStopName(stopText)
                 onNext()
             },
         )
     }
-
-
 }

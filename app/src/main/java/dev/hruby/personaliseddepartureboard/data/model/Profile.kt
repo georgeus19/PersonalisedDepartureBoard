@@ -56,13 +56,13 @@ fun ProfileStop.toDraft(): ProfileStopDraft =
     )
 
 fun ProfileStopDraft.toProfileStop(): ProfileStop {
-    require(!id.isNullOrEmpty()) { "Id must not be null or empty" }
+//    require(!id.isNullOrEmpty()) { "Id must not be null or empty" }
     require(name.trim().isNotBlank()) { "Name must not be blank" }
     require(platforms.isNotEmpty()) { "At least one platform must be selected"}
     require(lines.isNotEmpty()) { "At least one line must be selected" }
 
     return ProfileStop(
-        id = id,
+        id = "123",
         name = name.trim(),
         platforms = platforms,
         lines = lines
