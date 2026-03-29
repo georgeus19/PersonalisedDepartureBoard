@@ -92,7 +92,7 @@ fun <TId> MultiSelectScreen(
                             selectedIds = selectedIds.toggle(item.id)
                         }
                         .padding(vertical = 4.dp),
-                    verticalAlignment = Alignment.Top
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Checkbox(
                         checked = isSelected,

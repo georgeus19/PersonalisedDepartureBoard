@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -170,7 +171,10 @@ fun DepartureBoardApp(
             composable(route = Screen.SelectLines.name) {
                 val state by departureBoardViewModel.state.collectAsState()
                 val lines by departureBoardViewModel.lines.collectAsState()
-                departureBoardViewModel.fetchLines(state.editedProfile!!.stopDraft!!.name)
+                val stopName = state.editedProfile?.stopDraft?.name
+                LaunchedEffect(stopName) {
+                    stopName?.let { departureBoardViewModel.fetchLines(it) }
+                }
                 MultiSelectScreen(
                     items = lines.map { line ->
                         SelectableItem(
@@ -191,9 +195,13 @@ fun DepartureBoardApp(
                 )
             }
             composable(route = Screen.SelectPlatforms.name) {
+
                 val state by departureBoardViewModel.state.collectAsState()
                 val platforms by departureBoardViewModel.platforms.collectAsState()
-                departureBoardViewModel.fetchPlatforms(state.editedProfile!!.stopDraft!!.name)
+                val stopName = state.editedProfile?.stopDraft?.name
+                LaunchedEffect(stopName) {
+                    stopName?.let { departureBoardViewModel.fetchPlatforms(it) }
+                }
                 MultiSelectScreen(
                     items = platforms.map {
                         SelectableItem(id = it.code, cardContent = { PlatformOption(it) })
@@ -222,7 +230,9 @@ fun DepartureBoardApp(
 fun LineOption(
     lineId: String,
 ) {
-    Row() {
+    Row(
+        modifier = Modifier.padding(8.dp)
+    ) {
         Text(text = lineId)
     }
 }
@@ -231,14 +241,17 @@ fun LineOption(
 fun PlatformOption(
     platform: Platform
 ) {
-    Card() {
+    Card(
+        modifier = Modifier.padding(8.dp)
+    ) {
 
         Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(8.dp)
         ) {
             Text(
                 text = platform.code,
-                style = MaterialTheme.typography.labelLarge,
+                style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
@@ -249,6 +262,7 @@ fun PlatformOption(
                 platform.lines.forEach { line ->
                     AssistChip(
                         onClick = {},
+
                         enabled = false,
                         label = {
                             Row() {

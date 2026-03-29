@@ -105,6 +105,13 @@ fun DepartureItem(departure: DepartureFeature) {
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
+
+                departure.stop.platformCode?.let {
+                    Text(
+                        text = "Platform: ${it}",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
             }
 
             Column(horizontalAlignment = Alignment.End) {

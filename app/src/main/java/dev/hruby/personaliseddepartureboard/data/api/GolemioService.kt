@@ -9,7 +9,7 @@ interface GolemioService {
     @GET("v2/pid/departureboards")
     suspend fun getDepartures(
         @Header("X-Access-Token") accessToken: String,
-        @Query("ids") stopIds: List<String>,
+        @Query("ids[]") stopIds: List<String>,
         @Query("limit") limit: Int = 50,
         @Query("minutesBefore") minutesBefore: Int = 0,
         @Query("minutesAfter") minutesAfter: Int = 120,

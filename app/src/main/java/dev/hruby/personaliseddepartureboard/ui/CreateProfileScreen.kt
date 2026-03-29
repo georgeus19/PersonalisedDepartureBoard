@@ -159,15 +159,17 @@ private fun StopChipSection(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            values.forEach { value ->
-                AssistChip(
-                    onClick = {},
-                    enabled = false,
-                    label = {
-                        Text(value)
-                    }
-                )
-            }
+            values
+                .sortedBy { it }
+                .forEach { value ->
+                    AssistChip(
+                        onClick = {},
+                        enabled = false,
+                        label = {
+                            Text(value)
+                        }
+                    )
+                }
         }
     }
 }

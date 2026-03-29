@@ -24,6 +24,7 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.time.LocalTime
 import java.util.UUID
+import kotlin.collections.forEach
 
 data class DepartureBoardState(
     val profiles: List<Profile> = emptyList(),
@@ -43,7 +44,6 @@ data class Platform(
 class DepartureBoardViewModel(application: Application) : AndroidViewModel(application)  {
 
     val apiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NDg1NCwiaWF0IjoxNzczNjAxNTI3LCJleHAiOjExNzczNjAxNTI3LCJpc3MiOiJnb2xlbWlvIiwianRpIjoiZjUxNTM2NjctMDU1Yy00NWQxLWE1YjctOTc5ZTBhNjg0YTk2In0.S2Csa_AZJe3qUCh_V_5nkZLTSScOM7yJEFMus3MinrY"
-
 
     private val _state = MutableStateFlow(DepartureBoardState())
     val state: StateFlow<DepartureBoardState> = _state
@@ -80,10 +80,7 @@ class DepartureBoardViewModel(application: Application) : AndroidViewModel(appli
                     if (parts.size >= 2) {
                         val id = parts[0].trim()
                         val name = parts[1].trim().removeSurrounding("\"")
-                        // Store the first ID we find for a name, or handle duplicates as needed
-                        if (!stopMap.containsKey(name.lowercase())) {
-                            stopMap[name.lowercase()] = (stopMap[name.lowercase()] ?: emptyList()) + id
-                        }
+                        stopMap[name.lowercase()] = (stopMap[name.lowercase()] ?: emptyList()) + id
                     }
                 }
             } catch (e: Exception) {
@@ -109,6 +106,10 @@ class DepartureBoardViewModel(application: Application) : AndroidViewModel(appli
     fun fetchPlatforms(stopName: String) {
         fetchDeparturesByNameCallback(stopName, { departures ->
             // merge departures into lines
+
+            departures.forEach {
+                println("stop=${it.stop.id}, platformCode=${it.stop.platformCode}, headsign=${it.trip.headsign}")
+            }
 
             _platforms.value = departures
                 .groupBy { it.stop.platformCode ?: "UNK" }
@@ -149,6 +150,10 @@ class DepartureBoardViewModel(application: Application) : AndroidViewModel(appli
             _isLoading.value = true
             _error.value = null
             try {
+                stopIds.forEach {
+                    println("fatch ID=${it}")
+                }
+
                 val response = RetrofitInstance.api.getDepartures(
                     accessToken = apiKey,
                     stopIds = stopIds
