@@ -145,8 +145,8 @@ fun DepartureBoardApp(
                         navController.navigate(Screen.SelectStop.name)
                     },
                     onNext = {
-                        departureBoardViewModel.startProfileStopEdit()
-                        navController.navigate(Screen.SelectStop.name)
+                        departureBoardViewModel.saveProfile()
+                        navController.navigate(Screen.DepartureBoard.name)
                     },
                     onCancel = {
                         departureBoardViewModel.cancelProfileEdit()

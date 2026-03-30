@@ -22,18 +22,18 @@ import androidx.compose.ui.unit.dp
 import dev.hruby.personaliseddepartureboard.LineOption
 import dev.hruby.personaliseddepartureboard.Screen
 
-data class SelectableItem<TId>(
-    val id: TId,
+data class SelectableItem(
+    val id: String,
     val cardContent: @Composable () -> Unit
 )
 
 @Composable
-fun <TId> MultiSelectScreen(
-    items: List<SelectableItem<TId>>,
-    onNext: (List<TId>) -> Unit,
+fun MultiSelectScreen(
+    items: List<SelectableItem>,
+    onNext: (List<String>) -> Unit,
     onCancel: () -> Unit,
     modifier: Modifier = Modifier,
-    initiallySelectedIds: Set<TId> = emptySet(),
+    initiallySelectedIds: Set<String> = emptySet(),
 ) {
     var selectedIds by remember(items, initiallySelectedIds) {
         mutableStateOf(initiallySelectedIds)
@@ -45,45 +45,14 @@ fun <TId> MultiSelectScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-//        LazyColumn(
-//            modifier = Modifier.weight(1f),
-//            verticalArrangement = Arrangement.spacedBy(12.dp)
-//        ) {
-//            itemsIndexed(
-//                items = items,
-//                key = { index, item -> item.id?.hashCode() ?: index }
-//            ) { _, item ->
-//                val isSelected = item.id in selectedIds
-//
-//                Row(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .clickable {
-//                            selectedIds = selectedIds.toggle(item.id)
-//                        }
-//                        .padding(vertical = 4.dp),
-//                    verticalAlignment = Alignment.Top
-//                ) {
-//                    Checkbox(
-//                        checked = isSelected,
-//                        onCheckedChange = {
-//                            selectedIds = selectedIds.toggle(item.id)
-//                        }
-//                    )
-//
-//                    Column(
-//                        modifier = Modifier
-//                            .padding(start = 8.dp)
-//                            .weight(1f)
-//                    ) {
-//                        item.cardContent()
-//                    }
-//                }
-//            }
-//        }
-
-        Column() {
-            for(item in items) {
+        LazyColumn(
+            modifier = Modifier.weight(1f)
+        ) {
+            itemsIndexed(
+                items = items,
+                key = { index, item -> item.id }
+            )
+            { _, item ->
                 val isSelected = item.id in selectedIds
                 Row(
                     modifier = Modifier
@@ -109,6 +78,7 @@ fun <TId> MultiSelectScreen(
                         item.cardContent()
                     }
                 }
+
             }
         }
 
